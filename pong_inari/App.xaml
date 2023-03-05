@@ -2,8 +2,15 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:pong_inari"
-             StartupUri="GameWindow.xaml">
+             StartupUri="MainWindow.xaml">
     <Application.Resources>
         <FontFamily x:Key="Diary of an 8-bit mage">pack://application:,,,/resources/fonts/#Diary of an 8-bit mage</FontFamily>
+        <SolidColorBrush x:Key="Selected" Color="#e66d32"/>
+        <SolidColorBrush x:Key="Unselected" Color="#343e77"/>
+        <ImageSource x:Key="CatImage">pack://application:,,,/resources/images/cat.png</ImageSource>
+        <ImageSource x:Key="BallDefault">pack://application:,,,/resources/images/ball.png</ImageSource>
+        <ImageSource x:Key="BallBlue">pack://application:,,,/resources/images/ballBlue.png</ImageSource>
+        <ImageSource x:Key="BallYellow">pack://application:,,,/resources/images/ballYellow.png</ImageSource>
+        <Cursor x:Key="GameCursor">pack://application:,,,/resources/cursor/gamecursor.cur</Cursor>
     </Application.Resources>
 </Application>

@@ -35,9 +35,9 @@ namespace pong_inari.xaudio
         public bool IsLooped { get; private set; }
         private GameAudio(string name, float volume, bool isLooped)
         {
-                IsLooped = isLooped;
+            IsLooped = isLooped;
             Volume = volume;
-            
+
             UnmanagedMemoryStream? stream = resources.Sounds.ResourceManager.GetStream(name);
             if (stream is null) { throw new NullReferenceException($"There is no elements with name {name}"); }
 
@@ -48,10 +48,8 @@ namespace pong_inari.xaudio
                 AudioBytes = (int)_soundStream.Length,
                 Flags = BufferFlags.EndOfStream
             };
-
-            stream.Close();
-
-            if (isLooped) { _audioBuffer.LoopCount = int.MaxValue; }
+            
+            if (isLooped) { _audioBuffer.LoopCount = 99; }
 
             Voice = new SourceVoice(GamePlayer.XAudio, _soundStream.Format, true);
             Voice.SubmitSourceBuffer(_audioBuffer, _soundStream.DecodedPacketsInfo);

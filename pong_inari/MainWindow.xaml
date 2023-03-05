@@ -1,51 +1,15 @@
-﻿<Window x:Class="pong_inari.MainWindow"
+﻿<Window x:Name="StartScreen" x:Class="pong_inari.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:pong_inari"
         mc:Ignorable="d"
-        Title="pong_inari" ResizeMode="CanMinimize" HorizontalAlignment="Center" VerticalAlignment="Center" Width="795" Height="616" Icon="/resources/images/cat.png" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen" ContentRendered="Window_ContentRendered">
-
-    <Canvas Name="GameRegion" Height="600" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Image Name="background" Height="600" Width="800" Source="/resources/images/background.png"/>
-        <Label x:Name="PlayerScore" Content="000000000000000" Canvas.Top="16" Height="30" Width="248" HorizontalAlignment="Left" VerticalAlignment="Top"
-               FontFamily="{StaticResource Diary of an 8-bit mage}" FontSize="20" Background="{x:Null}">
-            <Label.Foreground>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="Black"/>
-                    <GradientStop Color="#FFE55B00" Offset="1"/>
-                </LinearGradientBrush>
-            </Label.Foreground>
-        </Label>
-        <Rectangle Name="BottomLine" Height="16" Canvas.Left="0" Canvas.Bottom="0" Width="800"
-               HorizontalAlignment="Left" VerticalAlignment="Bottom" StrokeThickness="0">
-            <Rectangle.Fill>
-                <ImageBrush Stretch="Fill" TileMode="Tile" ImageSource="/resources/images/brickblue.png" Viewbox="0,0,1,1" ViewboxUnits="RelativeToBoundingBox" ViewportUnits="Absolute" Viewport="0,0,16,16"/>
-            </Rectangle.Fill>
-        </Rectangle>
-        <Rectangle x:Name="TopLine" Height="16" Canvas.Left="0" Canvas.Top="0" Width="800"
-            StrokeThickness="0" HorizontalAlignment="Center" VerticalAlignment="Top">
-            <Rectangle.Fill>
-                <ImageBrush Stretch="Fill" TileMode="Tile" ImageSource="/resources/images/brickblue.png" Viewbox="0,0,1,1" ViewboxUnits="RelativeToBoundingBox" ViewportUnits="Absolute" Viewport="0,0,16,16"/>
-            </Rectangle.Fill>
-        </Rectangle>
-        <Rectangle x:Name="PlayerStick" Height="90" Width="15" Stroke="Black" Canvas.Top="255" HorizontalAlignment="Left" VerticalAlignment="Center"
-                   StrokeThickness="0" RenderTransformOrigin="15,45">
-            <Rectangle.Fill>
-                <ImageBrush ImageSource="/resources/images/brickred.png" ViewportUnits="Absolute" Viewport="0,0,15,15" TileMode="Tile"/>
-            </Rectangle.Fill>
-        </Rectangle>
-        <Rectangle x:Name="RightLine" Height="600" Canvas.Top="0" Width="16"
-            StrokeThickness="0" HorizontalAlignment="Center" VerticalAlignment="Center" Canvas.Right="0" Canvas.Left="784">
-            <Rectangle.Fill>
-                <ImageBrush Stretch="Fill" TileMode="Tile" ImageSource="/resources/images/brickblue.png" Viewbox="0,0,1,1" ViewboxUnits="RelativeToBoundingBox" ViewportUnits="Absolute" Viewport="0,0,16,15"/>
-            </Rectangle.Fill>
-        </Rectangle>
-        <Ellipse x:Name="PlayerBall" Height="30" Canvas.Left="15" Stroke="Black" Canvas.Top="285" Width="30" RenderTransformOrigin="15,1" HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="0">
-            <Ellipse.Fill>
-                <ImageBrush ImageSource="/resources/images/ball.png"/>
-            </Ellipse.Fill>
-        </Ellipse>
-    </Canvas>
+        Title="Pong by Inari" Height="300" Width="500" ResizeMode="CanMinimize"
+        WindowStartupLocation="CenterScreen" Cursor="{DynamicResource GameCursor}" MouseDown="StartScreen_MouseDown" KeyDown="KeyDownHandler">
+    <Grid x:Name="StartScreenGrid">
+        <Grid.Background>
+            <ImageBrush ImageSource="/resources/images/startscreen.jpg"/>
+        </Grid.Background>
+    </Grid>
 </Window>

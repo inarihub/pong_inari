@@ -1,0 +1,41 @@
+﻿<Page x:Class="pong_inari.MainMenuPages.OptionsMenuView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:pong_inari.MainMenuPages"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="500"
+      Title="OptionsMenuView">
+    <Grid x:Name="OptionsMenuGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Name="Pointer" Width="50*"/>
+            <ColumnDefinition Name="WhiteSpace" Width="10*"/>
+            <ColumnDefinition Name="Labels" Width="200*"/>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="210*"/>
+            <ColumnDefinition Width="10*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="40*"/>
+            <RowDefinition Height="40*"/>
+            <RowDefinition Height="40*"/>
+            <RowDefinition Height="40*"/>
+            <RowDefinition Height="40*"/>
+        </Grid.RowDefinitions>
+        <Grid.Background>
+            <ImageBrush ImageSource="/resources/images/startscreen.jpg"/>
+        </Grid.Background>
+        <Label Name="Difficulty" Grid.Column="3" Content="Difficulty:" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" FontFamily="{DynamicResource Diary of an 8-bit mage}" Foreground="{DynamicResource Unselected}" FontSize="24"/>
+        <Label Name="Sound" Grid.Column="3" Content="Sound level:" HorizontalAlignment="Left" Grid.Row="2" VerticalAlignment="Center" FontFamily="{DynamicResource Diary of an 8-bit mage}" Foreground="{DynamicResource Unselected}" FontSize="24"/>
+        <Label Name="BallSkin" Grid.Column="3" Content="Ball skin:" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Center" FontFamily="{DynamicResource Diary of an 8-bit mage}" Foreground="{DynamicResource Unselected}" FontSize="24"/>
+        <Label Name="ExitOptions" Grid.Column="3" Content="Exit" HorizontalAlignment="Left" Grid.Row="4" VerticalAlignment="Center" FontFamily="{DynamicResource Diary of an 8-bit mage}" Foreground="{DynamicResource Unselected}" FontSize="24"/>
+
+        <Label Name="DiffChanger" Grid.Column="5" Content="Normal" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" FontFamily="{DynamicResource Diary of an 8-bit mage}" Foreground="{DynamicResource Unselected}" FontSize="24"/>
+        <Label Name="SoundChanger" Grid.Column="5" Content="10" HorizontalAlignment="Left" Grid.Row="2" VerticalAlignment="Center" FontFamily="{DynamicResource Diary of an 8-bit mage}" Foreground="{DynamicResource Unselected}" FontSize="24"/>
+        <Image Name="SkinChanger" Grid.Column="5" HorizontalAlignment="Left" Height="30" Grid.Row="3" Width="30" RenderTransformOrigin="0.5,0.5" Source="/resources/images/ball.png" VerticalAlignment="Center"/>
+        <Image Grid.Column="5" HorizontalAlignment="Left" Height="50" Margin="52,0,0,0" Grid.Row="5" VerticalAlignment="Top" Width="150" Source="/resources/images/title.png"/>
+    </Grid>
+</Page>

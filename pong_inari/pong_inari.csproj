@@ -10,12 +10,17 @@
   <ItemGroup>
     <None Remove="background.png" />
     <None Remove="brickblue.png" />
+    <None Remove="resources\cursor\gamecursor.cur" />
     <None Remove="resources\fonts\diary8bitmage.ttf" />
     <None Remove="resources\images\background.png" />
     <None Remove="resources\images\ball.png" />
+    <None Remove="resources\images\ballBlue.png" />
+    <None Remove="resources\images\ballYellow.png" />
     <None Remove="resources\images\brickblue.png" />
     <None Remove="resources\images\brickred.png" />
     <None Remove="resources\images\cat.png" />
+    <None Remove="resources\images\startscreen.jpg" />
+    <None Remove="resources\images\title.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +28,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="resources\cursor\gamecursor.cur">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="resources\fonts\diary8bitmage.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -32,6 +40,8 @@
     <Resource Include="resources\images\ball.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="resources\images\ballBlue.png" />
+    <Resource Include="resources\images\ballYellow.png" />
     <Resource Include="resources\images\brickblue.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -39,8 +49,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="resources\images\cat.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="resources\images\startscreen.jpg" />
+    <Resource Include="resources\images\title.png" />
   </ItemGroup>
 
   <ItemGroup>
