@@ -1,8 +1,5 @@
 ﻿using System.Threading.Tasks;
-using SharpDX.Multimedia;
 using SharpDX.XAudio2;
-using System.Threading;
-using System.Runtime.CompilerServices;
 
 namespace pong_inari.xaudio
 {
@@ -18,12 +15,19 @@ namespace pong_inari.xaudio
         public static Task PlayAsync(this GameAudio audio)
         {
             var voice = audio.Voice;
-            if (!audio.IsPlaying || voice is not null)
+            if (voice is null) { return Task.CompletedTask; }
+            if (!audio.IsPlaying)
             {
-                voice.SetVolume(audio.Volume);
+                var volume = (float)((double)App.GlobalVolumePercent / 100);
+                voice.SetVolume(volume);
                 voice.Start();
                 audio.IsPlaying = true;
             }          
+            else if (audio.IsPlaying)
+            {
+                voice.Stop();
+                voice.Start();
+            }
             return Task.CompletedTask;
         }
         public static Task StopAsync(this GameAudio audio)

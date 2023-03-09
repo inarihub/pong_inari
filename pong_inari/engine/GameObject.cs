@@ -16,7 +16,7 @@ namespace pong_inari.engine
 {
     public class GameObject : IDisposable
     {
-        public GameWindow GWin { get; set; }   
+        public GameWindow GWin { get; set; }
         public string Name { get; set; }
         public double CenterX { get; set; }
         public double CenterY { get; set; }
@@ -50,6 +50,7 @@ namespace pong_inari.engine
             if (obj is null) { throw new NullReferenceException(); }
             View = obj.Fill;
             GameShape = obj;
+            GameShape.Name = name;
             IsCollided = isCollided;
             IsMoving = false;
             _topDesc = DependencyPropertyDescriptor.FromProperty(Canvas.TopProperty, Canvas.TopProperty.OwnerType);
@@ -64,7 +65,7 @@ namespace pong_inari.engine
                 if (sender is null) { return; }
                 UpdateCenter(sender as Shape);
             });
-            
+
         }
         public Task UpdateCenter(Shape obj)
         {

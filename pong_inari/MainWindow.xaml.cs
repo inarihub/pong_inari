@@ -72,5 +72,10 @@ namespace pong_inari
         {
             menuPages[current].MenuControl.ReadOptions(Switcher.None);
         }
+
+        private void StartScreen_Closed(object sender, EventArgs e)
+        {
+            App.Current.Shutdown();
+        }
     }
 }

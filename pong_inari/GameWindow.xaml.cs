@@ -17,7 +17,7 @@ namespace pong_inari
 {
     public partial class GameWindow : Window
     {
-        const double PLAYERBALL_X_DEFAULT = 15;
+        const double PLAYERBALL_X_DEFAULT = 20;
         const double PLAYERBALL_Y_DEFAULT = 285;
 
         const double PLAYERSTICK_X_DEFAULT = 0;
@@ -35,7 +35,6 @@ namespace pong_inari
         private void ResetWindow()
         {
             Hint.Content = string.Empty;
-            ResetTargets();
             ResetPlayer();
             PlayerScore.Content = "000000000000000";
             StartMessage.Visibility = Visibility.Visible;
@@ -47,18 +46,9 @@ namespace pong_inari
             Canvas.SetLeft(PlayerStick, PLAYERSTICK_X_DEFAULT);
             Canvas.SetTop(PlayerStick, PLAYERSTICK_Y_DEFAULT);
         }
-        private void ResetTargets()
+        public async Task PlaySoundEffect(string name)
         {
-            if (PongGame.Targets.Any())
-            {
-                PongGame.Targets.ForEach(x => 
-                {
-                    x.GameShape.Visibility = Visibility.Hidden;
-                    GameRegion.Children.Remove(x.GameShape);
-                });
-
-            PongGame.Targets.Clear();
-            }
+            await GameAudio.GetAudio(name).PlayAsync();
         }
         private void GameScreen_KeyDown(object sender, KeyEventArgs e)
         {
@@ -78,14 +68,9 @@ namespace pong_inari
         {
             if (PongGame is null) { return; }
 
-            if (!PongGame.IsPlayerStarted)
+            if (!PongGame.IsInProcess)
             {
                 PongGame.Start();
-                Hint.Content = "Press Esc to pause";
-                StartMessage.Visibility = Visibility.Hidden;
-            }
-            else
-            {
                 StartMessage.Visibility = Visibility.Hidden;
             }
         }
@@ -93,8 +78,9 @@ namespace pong_inari
         {
             if (PongGame is null) { return; }
 
-            if (!PongGame.IsPlayerStarted)
+            if (!PongGame.IsInProcess)
             {
+                PongGame.Stop();
                 ResetWindow();
                 Hide();
                 App.Current.MainWindow.Show();

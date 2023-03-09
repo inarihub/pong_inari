@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:pong_inari"
         mc:Ignorable="d"
         Title="Pong by Inari" Height="300" Width="500" ResizeMode="CanMinimize"
-        WindowStartupLocation="CenterScreen" Cursor="{DynamicResource GameCursor}" MouseDown="StartScreen_MouseDown" KeyDown="KeyDownHandler">
+        WindowStartupLocation="CenterScreen" Cursor="{DynamicResource GameCursor}" MouseDown="StartScreen_MouseDown" KeyDown="KeyDownHandler" Closed="StartScreen_Closed">
     <Grid x:Name="StartScreenGrid">
         <Grid.Background>
             <ImageBrush ImageSource="/resources/images/startscreen.jpg"/>

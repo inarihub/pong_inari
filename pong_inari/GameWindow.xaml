@@ -10,7 +10,7 @@
     <Canvas Name="GameRegion" Height="600" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center">
         <Image Name="background" Height="600" Width="800" Source="/resources/images/background.png"/>
         <Label x:Name="PlayerScore" Content="000000000000000" Canvas.Top="16" Height="30" Width="248" HorizontalAlignment="Left" VerticalAlignment="Top"
-               FontFamily="{StaticResource Diary of an 8-bit mage}" FontSize="20" Background="{x:Null}">
+               FontFamily="{StaticResource Diary of an 8-bit mage}" FontSize="20" Background="{x:Null}" Panel.ZIndex="1">
             <Label.Foreground>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="Black"/>
@@ -36,19 +36,19 @@
                 <ImageBrush ImageSource="/resources/images/brickred.png" ViewportUnits="Absolute" Viewport="0,0,15,15" TileMode="Tile"/>
             </Rectangle.Fill>
         </Rectangle>
-        <Rectangle x:Name="RightLine" Height="600" Canvas.Top="0" Canvas.Left="784" Canvas.Right="0" Width="16"
-            StrokeThickness="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Rectangle x:Name="RightLine" Height="600" Canvas.Top="0" Canvas.Left="784" Width="16"
+            HorizontalAlignment="Center" VerticalAlignment="Center">
             <Rectangle.Fill>
                 <ImageBrush Stretch="Fill" TileMode="Tile" ImageSource="/resources/images/brickblue.png" Viewbox="0,0,1,1" ViewboxUnits="RelativeToBoundingBox" ViewportUnits="Absolute" Viewport="0,0,16,15"/>
             </Rectangle.Fill>
         </Rectangle>
-        <Ellipse x:Name="PlayerBall" Height="30" Canvas.Left="15" Stroke="Black" Canvas.Top="285" Width="30" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="0" Visibility="Hidden">
+        <Ellipse x:Name="PlayerBall" Height="30" Width="30" Canvas.Left="20" Stroke="Black" Canvas.Top="285" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" VerticalAlignment="Center" StrokeThickness="0" Visibility="Hidden">
             <Ellipse.Fill>
                 <ImageBrush ImageSource="/resources/images/ball.png"/>
             </Ellipse.Fill>
         </Ellipse>
-        <Label Name="Hint" Content="Press Esc for main menu" Canvas.Left="606" Canvas.Top="17" HorizontalAlignment="Center" VerticalAlignment="Top" Width="173" FontFamily="{DynamicResource Diary of an 8-bit mage}"/>
-        <Label Name="StartMessage" Content="Are you ready? Press &quot;Enter&quot; to start!" Canvas.Left="127" Canvas.Top="283" FontFamily="{DynamicResource Diary of an 8-bit mage}" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+        <Label Name="Hint" Content="W = up, S = down, Enter = start, Esc = exit" Canvas.Left="497" Canvas.Top="16" HorizontalAlignment="Left" VerticalAlignment="Center" Width="287" FontFamily="{DynamicResource Diary of an 8-bit mage}"/>
+        <Label Name="StartMessage" Content="Are you ready? Press &quot;Enter&quot; to start!" Canvas.Left="127" Canvas.Top="283" FontFamily="{DynamicResource Diary of an 8-bit mage}" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Panel.ZIndex="1">
             <Label.Foreground>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="Black"/>

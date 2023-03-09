@@ -9,26 +9,28 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Navigation;
+using Cfg = pong_inari.GameConfig;
 
 namespace pong_inari
 {
     public partial class App : Application
     {
+        public static int GlobalVolumePercent { get; set; }
         public GameAudio BackgroundAudio { get; private set; }
         private App()
         {
-            BackgroundAudio = GameAudio.GetAudio("background", 0.5f);
+            GlobalVolumePercent = 50;
+            BackgroundAudio = GameAudio.GetAudio("background", true);
             this.Startup += BGSoundStartHandleAsync;
             this.Exit += BGSoundStopHandleAsync;
         }
-
-        private void BGSoundStartHandleAsync(object? sender, StartupEventArgs e)
+        private async void BGSoundStartHandleAsync(object? sender, StartupEventArgs e)
         {
-            Task.Run(() => BackgroundAudio.PlayAsync());
+            await Task.Run(() => BackgroundAudio.PlayAsync());
         }
-        private void BGSoundStopHandleAsync(object sender, ExitEventArgs e)
+        private async void BGSoundStopHandleAsync(object sender, ExitEventArgs e)
         {
-            BackgroundAudio.StopAsync().GetAwaiter();
+            await Task.Run(() => BackgroundAudio.StopAsync());
         }
     }
     public static class AppExtensionMethods

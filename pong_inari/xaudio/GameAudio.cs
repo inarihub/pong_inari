@@ -1,9 +1,12 @@
-﻿using SharpDX.Multimedia;
+﻿using pong_inari.engine;
+using SharpDX;
+using SharpDX.Multimedia;
 using SharpDX.XAudio2;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,7 +18,7 @@ namespace pong_inari.xaudio
     {
         private static Dictionary<string, GameAudio> _soundlib = new Dictionary<string, GameAudio>();
         public SoundStream _soundStream;
-
+        public string Name { get; set; }
         private AudioBuffer _audioBuffer;
         /// <summary>
         /// Source voice to play.
@@ -37,7 +40,7 @@ namespace pong_inari.xaudio
         {
             IsLooped = isLooped;
             Volume = volume;
-
+            Name = name;
             UnmanagedMemoryStream? stream = resources.Sounds.ResourceManager.GetStream(name);
             if (stream is null) { throw new NullReferenceException($"There is no elements with name {name}"); }
 
@@ -48,27 +51,48 @@ namespace pong_inari.xaudio
                 AudioBytes = (int)_soundStream.Length,
                 Flags = BufferFlags.EndOfStream
             };
+
+            if (isLooped) { _audioBuffer.LoopCount = 99; _audioBuffer.LoopBegin = 0; }
             
-            if (isLooped) { _audioBuffer.LoopCount = 99; }
 
             Voice = new SourceVoice(GamePlayer.XAudio, _soundStream.Format, true);
             Voice.SubmitSourceBuffer(_audioBuffer, _soundStream.DecodedPacketsInfo);
+            Voice.SetVolume(volume);
+            Voice.StreamEnd += SoundEndsHandler;
         }
-        public static GameAudio GetAudio(string name, float volume = 1.0f, bool isLooped = false)
+
+        private void SoundEndsHandler()
+        {
+            IsPlaying = false;
+            _soundlib.Remove(Name);
+            if (IsLooped)
+            {
+                this.PlayAsync();
+            }
+        }
+
+        public static void SetGlobalVolume(float volume)
+        {
+            foreach (var soundBlock in _soundlib)
+            {
+                soundBlock.Value.Voice.SetVolume(volume);
+                soundBlock.Value.Volume = volume;
+            }
+        }
+        public static GameAudio GetAudio(string name, bool isLooped = false)
         {
             lock (_soundlib)
             {
                 GameAudio? result = null;
-
-                if (_soundlib.ContainsKey(name))
+                var volume = (float)((double)App.GlobalVolumePercent / 100);
+                result = new GameAudio(name, volume, isLooped);
+                var keyName = name;
+                while (_soundlib.ContainsKey(keyName))
                 {
-                    result = _soundlib[name];
+                    keyName += new Random().Next(0, 9);
                 }
-                else
-                {
-                    result = new GameAudio(name, volume, isLooped);
-
-                }
+                result = new GameAudio(name, volume, isLooped);
+                _soundlib.Add(keyName, result);
                 return result;
             }
         }

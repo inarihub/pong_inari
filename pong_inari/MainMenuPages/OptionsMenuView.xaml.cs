@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Collections.Generic;
 using System.Windows.Media;
 using System.Linq;
+using pong_inari.xaudio;
 
 namespace pong_inari.MainMenuPages
 {
@@ -61,21 +62,22 @@ namespace pong_inari.MainMenuPages
         }
         private void SoundChange(Switcher dir)
         {
-            ((App)App.Current).BackgroundAudio.Voice.GetVolume(out float volume);
-            int volumePercent = (int)(volume * 100);
-            volumePercent = (dir == Switcher.Left) ? volumePercent - VOLUME_STEP : volumePercent + VOLUME_STEP;
+            var volume = App.GlobalVolumePercent;
+            volume = (dir == Switcher.Left) ? volume - VOLUME_STEP : volume + VOLUME_STEP;
 
-            if (volumePercent < 0)
+            if (volume < 0)
             {
-                volumePercent = 0;
+                volume = 0;
             }
-            else if (volumePercent > 100)
+            else if (volume > 100)
             {
-                volumePercent = 100;
+                volume = 100;
             }
 
-            ((App)App.Current).BackgroundAudio.Voice.SetVolume(volumePercent / 100f);
-            SoundChanger.Content = volumePercent;
+            //((App)App.Current).BackgroundAudio.Voice.SetVolume(volumePercent / 100f);
+            GameAudio.SetGlobalVolume((float)((double)volume / 100));
+            App.GlobalVolumePercent = volume;
+            SoundChanger.Content = volume;
         }
         private void SkinChange(Switcher dir)
         {

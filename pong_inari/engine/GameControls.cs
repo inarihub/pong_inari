@@ -74,26 +74,53 @@ namespace pong_inari.engine
         {
             if (KeyPressed[Key.Down] && !KeyPressed[Key.Up])
             {
-                await GWin.PlayerStick.Dispatcher.BeginInvoke(() =>
-                {
-                    stick.ChangeState(StickMoving.Down);
-                    Canvas.SetTop(stick.GameShape, Canvas.GetTop(stick.GameShape) + stick.MoveVector.VelocityY);
-                    
-                });
+                await MoveStickDown(stick);
             }
             else if (KeyPressed[Key.Up] && !KeyPressed[Key.Down])
             {
-                await GWin.PlayerStick.Dispatcher.BeginInvoke(() =>
-                {
-                    stick.ChangeState(StickMoving.Up);
-                    Canvas.SetTop(stick.GameShape, Canvas.GetTop(stick.GameShape) + stick.MoveVector.VelocityY);
-                    
-                });
+                await MoveStickUp(stick);
             }
             else
             {
-                GWin.PongGame.Stick.ChangeState(StickMoving.Static);
+                stick.ChangeState(StickMoving.Static);
             }
+        }
+        private async Task MoveStickDown(PlayerStick stick)
+        {
+            var stickStepPerFrame = stick.MoveVector.VelocityY;
+
+            await GWin.PlayerStick.Dispatcher.BeginInvoke(() =>
+            {
+                var stickHeight = stick.GameShape.ActualHeight;
+                var bottomBorder = GWin.PongGame.Elements.GameField["Bottom"] - stickHeight;
+
+                if (Canvas.GetTop(stick.GameShape) + stickStepPerFrame >= bottomBorder)
+                {
+                    Canvas.SetTop(stick.GameShape, bottomBorder);
+                    return;
+                }
+                stick.ChangeState(StickMoving.Down);
+                Canvas.SetTop(stick.GameShape, Canvas.GetTop(stick.GameShape) + stickStepPerFrame);
+
+            });
+        }
+        private async Task MoveStickUp(PlayerStick stick) 
+        {
+            var stickStepPerFrame = stick.MoveVector.VelocityY;
+
+            await GWin.PlayerStick.Dispatcher.BeginInvoke(() =>
+            {
+                var topBorder = GWin.PongGame.Elements.GameField["Top"];
+
+                if (Canvas.GetTop(stick.GameShape) + stickStepPerFrame <= topBorder)
+                {
+                    Canvas.SetTop(stick.GameShape, topBorder);
+                    return;
+                }
+                stick.ChangeState(StickMoving.Up);
+                Canvas.SetTop(stick.GameShape, Canvas.GetTop(stick.GameShape) + stickStepPerFrame);
+
+            });
         }
     }
 }

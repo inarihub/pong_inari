@@ -18,71 +18,62 @@ namespace pong_inari.engine
 {
     public class PlayerBall : GameObject
     {
-        private Game CurrentGame { get; set; }
-        private PlayerStick Stick { get; set; }
+        private GameElements Elements { get; set; }
+
+        public EllipseGeometry _ballGeometry;
+
+        public System.Windows.Point _ballCenter;
 
         private Acceleration _previousAcc;
         public Acceleration MoveVector { get; set; }
-        private Line Path { get; set; }
-        public PlayerBall(string name, Shape obj, PlayerStick stick, Game game) : base(name, obj, true)
+        public PlayerBall(string name, Shape obj, GameElements elements) : base(name, obj, true)
         {
-            CurrentGame = game;
-            Path = new Line();
-            Stick = stick;
-            Path.Visibility = Visibility.Hidden;
+            _ballCenter = new System.Windows.Point(CenterX, CenterY);
+            _ballGeometry = new EllipseGeometry(_ballCenter, 15, 15);
             IsMoving = false;
             MoveVector = new(0, 0);
             _previousAcc = new(0, 0);
+            Elements = elements;
         }
         public void Start()
         {
-            //PathGeometry path = new PathGeometry();
-            //FigureStructure
-            //System.Windows.Shapes.Line line = new();
-            //line.TranslatePoint()
             Unfreeze();
             IsMoving = true;
             MoveVector.VelocityX = Cfg.PlayerBallSpeed;
-            //OnHit += OnHitHandler;
-        }
-
-        //private async void OnHitHandler(object? sender, object? e)
-        //{
-        //     await Task.Run(() =>
-        //     {
-        //         if (e is null) { return; }
-        //         MoveVector.Reflect(this, e as GameObject);
-        //     });
-        //}
-        private async Task UpdatePath()
-        {
-            if (IsMoving)
-            {
-                Path.
-            }
         }
         public async void MoveBall()
         {
+            if (MoveVector.VelocityX > Cfg.PlayerBallSpeed)
+            {
+                MoveVector.VelocityX = Cfg.PlayerBallSpeed;
+            }
+            if (MoveVector.VelocityY > Cfg.PlayerBallSpeed)
+            {
+                MoveVector.VelocityY = Cfg.PlayerBallSpeed;
+            }
             await GameShape.Dispatcher.BeginInvoke(() =>
             {
+                _ballCenter.X = Canvas.GetLeft(GameShape) + (GameShape.Width / 2);
+                _ballCenter.Y = Canvas.GetTop(GameShape) + (GameShape.Height / 2);
+                _ballGeometry.Center = _ballCenter;
+                Elements.CollisionModels.CheckCollisionModels(_ballGeometry);
                 Canvas.SetLeft(GameShape, Canvas.GetLeft(GameShape) + MoveVector.VelocityX);
-                Canvas.SetTop(GameShape, Canvas.GetTop(GameShape) + MoveVector.VelocityY);
-            });
-            CheckIntersection();
-        }
-        public async void AttachBall()
-        {
-            MoveVector.VelocityY = Stick.MoveVector.VelocityY;
-
-            await GameShape.Dispatcher.BeginInvoke(() =>
-            {
                 Canvas.SetTop(GameShape, Canvas.GetTop(GameShape) + MoveVector.VelocityY);
             });
         }
         public Task CheckIntersection()
         {
-            
             return Task.CompletedTask;
+        }
+        public async void AttachBallToStick()
+        {
+            var stick = Elements.Stick;
+            MoveVector.VelocityY = stick.MoveVector.VelocityY;
+
+            await GameShape.Dispatcher.BeginInvoke(() =>
+            {
+                Canvas.SetTop(GameShape, Canvas.GetTop(stick.GameShape) + (stick.GameShape.ActualHeight / 2) - (GameShape.ActualHeight / 2));
+            });
         }
         public void Freeze()
         {

@@ -13,7 +13,6 @@ namespace pong_inari.engine
     public class GameTarget : GameObject
     {
         private static int _nameId;
-        private Canvas GameRegion { get; set; }
         public GameTarget(string name, Shape shape) : base(name, shape)
         {
             

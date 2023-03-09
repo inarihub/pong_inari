@@ -39,18 +39,18 @@ namespace pong_inari
             switch (Difficulty)
             {
                 case DifficultyLevel.Easy:
-                    PlayerBallSpeed = 5;
-                    PlayerStickSpeed = 12;
-                    MaxTargets = 5;
+                    PlayerBallSpeed = 4;
+                    PlayerStickSpeed = 4;
+                    MaxTargets = 10;
                     break;
                 case DifficultyLevel.Medium:
-                    PlayerBallSpeed = 8;
-                    PlayerStickSpeed = 8;
-                    MaxTargets = 10;
+                    PlayerBallSpeed = 7;
+                    PlayerStickSpeed = 7;
+                    MaxTargets = 12;
                     break;
                 case DifficultyLevel.Hard:
                     PlayerBallSpeed = 12;
-                    PlayerStickSpeed = 5;
+                    PlayerStickSpeed = 12;
                     MaxTargets = 15;
                     break;
                 default:
