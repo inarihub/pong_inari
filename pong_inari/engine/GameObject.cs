@@ -1,29 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
 
 namespace pong_inari.engine
 {
     public class GameObject : IDisposable
     {
+        private bool _isCollided;
+        public Shape? _collidedObj;
+        private DependencyPropertyDescriptor _topDesc;
+        private DependencyPropertyDescriptor _leftDesc;
         public GameWindow GWin { get; set; }
         public string Name { get; set; }
         public double CenterX { get; set; }
         public double CenterY { get; set; }
-
-        private DependencyPropertyDescriptor _topDesc;
-
-        private DependencyPropertyDescriptor _leftDesc;
         public Brush View { get; set; }
         public Shape GameShape { get; set; }
         public bool IsMoving { get; set; }
@@ -38,11 +31,6 @@ namespace pong_inari.engine
                 _collidedObj = null;
             }
         }
-
-        private bool _isCollided;
-
-        public Shape? _collidedObj;
-
         public event EventHandler<object?>? OnHit;
         public GameObject(string name, Shape? obj, bool isCollided = false)
         {
@@ -63,7 +51,7 @@ namespace pong_inari.engine
             await Task.Run(() =>
             {
                 if (sender is null) { return; }
-                UpdateCenter(sender as Shape);
+                UpdateCenter((Shape)sender);
             });
 
         }
@@ -97,10 +85,6 @@ namespace pong_inari.engine
                 _collidedObj = obj;
             }
             return Task.FromResult(IsCollided);
-        }
-        public Task GetIntersectionDetails()
-        {
-            return Task.CompletedTask;
         }
         public void Dispose()
         {

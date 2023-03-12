@@ -3,40 +3,38 @@ using pong_inari.uicontrols;
 using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace pong_inari
 {
     public partial class MainWindow : Window
     {
-        // to IGameMenu
-        public Dictionary<string, IGameMenu> menuPages;
-        public string current;
+        public Dictionary<string, IGameMenu> _menuPages;
+        public string _current;
         public MainWindow()
         {
             InitializeComponent();
-            menuPages = new Dictionary<string, IGameMenu>
+            _menuPages = new Dictionary<string, IGameMenu>
             {
                 { "StartMenu", new StartMenuView() },
                 { "OptionsMenu", new OptionsMenuView() }
             };
-            current = "StartMenu";
+            _current = "StartMenu";
             this.ContentRendered += PageRenderedHandler;
         }
         private void PageRenderedHandler(object? sender, EventArgs e)
         {
-            ChangeMenu(current);
+            ChangeMenu(_current);
         }
         public void ChangeMenu(string menu)
         {
-            menuPages[current].MenuControl.SetSelection();
-            current = menu;
-            Content = menuPages[menu];
+            _menuPages[_current].MenuControl.SetSelection();
+            _current = menu;
+            Content = _menuPages[menu];
         }
         public void KeyDownHandler(object sender, KeyEventArgs e)
         {
-            var currentMenu = menuPages[current].MenuControl;
+            var currentMenu = _menuPages[_current].MenuControl;
 
             switch (e.Key)
             {
@@ -70,9 +68,8 @@ namespace pong_inari
         }
         private void StartScreen_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            menuPages[current].MenuControl.ReadOptions(Switcher.None);
+            _menuPages[_current].MenuControl.ReadOptions(Switcher.None);
         }
-
         private void StartScreen_Closed(object sender, EventArgs e)
         {
             App.Current.Shutdown();

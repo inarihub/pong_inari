@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents.DocumentStructures;
+﻿using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Cfg = pong_inari.GameConfig;
 
@@ -18,14 +7,10 @@ namespace pong_inari.engine
 {
     public class PlayerBall : GameObject
     {
-        private GameElements Elements { get; set; }
-
         public EllipseGeometry _ballGeometry;
-
         public System.Windows.Point _ballCenter;
-
         private Acceleration _previousAcc;
-        public Acceleration MoveVector { get; set; }
+        private GameElements Elements { get; set; } public Acceleration MoveVector { get; set; }
         public PlayerBall(string name, Shape obj, GameElements elements) : base(name, obj, true)
         {
             _ballCenter = new System.Windows.Point(CenterX, CenterY);
@@ -61,10 +46,6 @@ namespace pong_inari.engine
                 Canvas.SetTop(GameShape, Canvas.GetTop(GameShape) + MoveVector.VelocityY);
             });
         }
-        public Task CheckIntersection()
-        {
-            return Task.CompletedTask;
-        }
         public async void AttachBallToStick()
         {
             var stick = Elements.Stick;
@@ -84,7 +65,7 @@ namespace pong_inari.engine
         public void Unfreeze()
         {
             if (_previousAcc.VelocityX == 0 && _previousAcc.VelocityY == 0) { return; }
-
+            IsMoving = true;
             MoveVector.SetAcceleration(_previousAcc.VelocityX, _previousAcc.VelocityY);
         }
     }

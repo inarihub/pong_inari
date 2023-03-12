@@ -1,147 +1,142 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Threading;
-using System.Diagnostics;
 using Sys = System.Timers;
-using System.ComponentModel;
 using System.Windows;
 using Cfg = pong_inari.GameConfig;
+using System.Timers;
 
 namespace pong_inari.engine
 {
     public class Game : IDisposable
     {
-        private Action BallBehaivor;
+        private Action? _ballBehaivor;
+        private GameState _currentState;
+        public GameWindow _winOwner;
         public Sys.Timer FrameUpdater { get; private set; }
-
-        public GameWindow GWin;
         public GameElements Elements { get; private set; }
-        public ScoreBoard Scores { get; set; }
+        public ScoreBoard Score { get; set; }
+        public GameState CurrentState
+        {
+            get { return _currentState; }
+            set { OnStatesChanged[value].Invoke(); _currentState = value; }
+        }
+        public Dictionary<GameState, Action> OnStatesChanged { get; private set; }
 
-        private bool _isInProcess = false;
-        public bool IsInProcess
-        {
-            get { return _isInProcess; }
-            set { _isInProcess = value; OnStateChange.Invoke(this, value); }
-        }
-        private bool _isPlayerPreparing = false;
-        public bool IsPlayerPreparing
-        {
-            get { return _isPlayerPreparing; }
-            set { _isPlayerPreparing = value; OnPlayerStarted.Invoke(this, value); }
-        }
-        public event EventHandler<bool> OnStateChange;
-        public event EventHandler<bool> OnPlayerStarted;
-        const double ONE_FRAME_DURATION = 16700;
+        private const double ONE_FRAME_DURATION = 16700;
         public Game(GameWindow gWin)
         {
-            Elements = new GameElements(gWin);
-            GWin = gWin;
+            _winOwner = gWin;
+            Elements = new GameElements(_winOwner);
 
-            FrameUpdater = new Sys.Timer();
-            FrameUpdater.Interval = TimeSpan.FromMicroseconds(ONE_FRAME_DURATION).TotalMilliseconds;
-            FrameUpdater.AutoReset = true;
+            OnStatesChanged = new Dictionary<GameState, Action>
+            {
+                { GameState.Preparing, PreparingHandler },
+                { GameState.Started, StartGameHandler },
+                { GameState.Unpaused, UnpauseHandler },
+                { GameState.Paused, PauseHandler },
+                { GameState.GameOver, GameOverHandler },
+                { GameState.Exited, ExitGameHandler },
+            };
 
-            OnStateChange += StateChangeHandler;
-            OnPlayerStarted += PlayerStartedHandler;
+            FrameUpdater = new Sys.Timer
+            {
+                Interval = TimeSpan.FromMicroseconds(ONE_FRAME_DURATION).TotalMilliseconds,
+                AutoReset = true
+            };
 
-            BallBehaivor += Elements.Ball.AttachBallToStick;
-            Scores = new(gWin.PlayerScore);
+            Score = new(_winOwner.PlayerScore);
         }
-
-        private void PlayerStartedHandler(object? sender, bool isPreparing)
+        private void PreparingHandler()
         {
-            if (isPreparing)
-            {
-                FrameUpdater.Elapsed += ControlsActivatedHandler;
-            }
-            else
-            {
-                BallBehaivor -= Elements.Ball.AttachBallToStick;
-                BallBehaivor += Elements.Ball.MoveBall;
-                
-                FrameUpdater.Elapsed -= ControlsActivatedHandler;
-                Elements.Ball.Start();
-            }
+            FrameUpdater.Elapsed += ControlsActivatedHandler;
+            _ballBehaivor += Elements.Ball.AttachBallToStick;
+            FrameUpdater.Start();
+            var startMsg = _winOwner.StartMessage;
+            startMsg.Visibility = Visibility.Visible;
+            startMsg.Content = "Are you ready? Press \"Enter\" to start!";
         }
-        private void StateChangeHandler(object? sender, bool IsOn)
+        private void StartGameHandler()
         {
-            if (IsOn)
-            {
-                FrameUpdater.Elapsed += GameStartedHandler;
-                FrameUpdater.Elapsed += ControlsActivatedHandler;
-            }
-            else
-            {
-                FrameUpdater.Elapsed -= GameStartedHandler;
-                FrameUpdater.Elapsed -= ControlsActivatedHandler;
-            }
+            _ballBehaivor -= Elements.Ball.AttachBallToStick;
+            _ballBehaivor += Elements.Ball.MoveBall;
+            FrameUpdater.Elapsed += GameStartedHandler;
+            Elements.Ball.Start();
+            var startMsg = _winOwner.StartMessage;
+            startMsg.Visibility = Visibility.Hidden;
+        }
+        private void UnpauseHandler()
+        {
+            Elements.Ball.Unfreeze();
+            FrameUpdater.Elapsed += GameStartedHandler;
+            FrameUpdater.Elapsed += ControlsActivatedHandler;
+            FrameUpdater.Start();
+            var startMsg = _winOwner.StartMessage;
+            startMsg.Visibility = Visibility.Hidden;
+        }
+        private void PauseHandler()
+        {
+            Elements.Ball.Freeze();
+            FrameUpdater.Stop();
+            FrameUpdater.Elapsed -= GameStartedHandler;
+            FrameUpdater.Elapsed -= ControlsActivatedHandler;
+            var startMsg = _winOwner.StartMessage;
+            startMsg.Content = "PAUSE (Enter - continue, Esc - Main menu)";
+            startMsg.Visibility = Visibility.Visible;
+        }
+        private void GameOverHandler()
+        {
+            FrameUpdater.Stop();
+            FrameUpdater.Elapsed -= GameStartedHandler;
+            FrameUpdater.Elapsed -= ControlsActivatedHandler;
+            var startMsg = _winOwner.StartMessage;
+            startMsg.Content = "GAME OVER (Press \"Esc\" to exit)";
+            startMsg.HorizontalAlignment = HorizontalAlignment.Center;
+            startMsg.Visibility = Visibility.Visible;
+        }
+        private void ExitGameHandler()
+        {
+            Dispose();
         }
         private async void ControlsActivatedHandler(object? sender, Sys.ElapsedEventArgs e)
         {
-            await Task.Run(() => GWin.Controls.MoveStick(Elements.Stick));
-            await Task.Run(BallBehaivor);
+            await Task.Run(() => _winOwner.Controls.MoveStick(Elements.Stick));
+            if (_ballBehaivor is null) { throw new NullReferenceException(nameof(ControlsActivatedHandler)); }
+            await Task.Run(_ballBehaivor);
         }
         private async void GameStartedHandler(object? sender, Sys.ElapsedEventArgs e)
         {
-            await GWin.Dispatcher.BeginInvoke(() =>
+            await _winOwner.Dispatcher.BeginInvoke(() =>
             {
                 if (Canvas.GetLeft(Elements.Ball.GameShape) < 0)
                 {
-                    SetGameOver();
+                    CurrentState = GameState.GameOver;
                     return;
                 }
             });
-            var taskSpawnTargets = Task.Run(() => Elements.SpawnTarget(GWin));
-            var taskScore = Task.Run(() => { Scores += 10; });
+            var taskSpawnTargets = Task.Run(() => Elements.SpawnTarget(_winOwner));
+            var taskScore = Task.Run(() => { Score += 10; });
             await Task.WhenAll(taskSpawnTargets, taskScore);
-        }
-        public void Initialize()
-        {
-            IsPlayerPreparing = true;
-            FrameUpdater.Start();
-        }
-        private void SetGameOver()
-        {
-            Stop();
-            GWin.StartMessage.Content = "GAME OVER (Press \"Esc\" to exit)";
-            GWin.StartMessage.HorizontalAlignment = HorizontalAlignment.Center;
-            GWin.StartMessage.Visibility = Visibility.Visible;
-        }
-        public void Start()
-        {
-            if (IsPlayerPreparing)
-            {
-                Elements.Ball.Start();
-                IsPlayerPreparing = false;
-                IsInProcess = true;
-                FrameUpdater.Start();
-            }
-            else
-            {
-                Elements.Ball.Unfreeze();
-                IsInProcess = true;
-                FrameUpdater.Start();
-            }
-        }
-        public void Stop()
-        {
-            IsInProcess = false;
-            FrameUpdater.Stop();
-            Elements.Ball.Freeze();
         }
         public void Dispose()
         {
+            if (FrameUpdater.Enabled)
+            {
+                FrameUpdater.Stop();
+            }
+            FrameUpdater.Dispose();
+            
             GC.Collect();
         }
+    }
+    public enum GameState
+    {
+        Preparing,
+        Started,
+        Unpaused,
+        Paused,
+        GameOver,
+        Exited
     }
 }

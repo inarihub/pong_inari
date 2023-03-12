@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Shapes;
 using Cfg = pong_inari.GameConfig;
 
@@ -13,7 +10,8 @@ namespace pong_inari.engine
 {
     public class GameElements
     {
-        private Random _rngCreator;
+        private const int LEFT_TARGET_INDENT = 100; // temp solution to avoid spawning too close to player
+        private readonly Random _rngCreator;
         private GameWindow GWin { get; set; }
         public PlayerBall Ball { get; set; }
         public PlayerStick Stick { get; set; }
@@ -54,26 +52,22 @@ namespace pong_inari.engine
                     rightBorder = Convert.ToInt32(GameField["Right"] - newTarget.GameShape.Width);
                     topBorder = Convert.ToInt32(GameField["Top"]);
                     bottomBorder = Convert.ToInt32(GameField["Bottom"] - newTarget.GameShape.Height);
-                    Canvas.SetLeft(newTarget.GameShape, _rngCreator.
-                        Next(leftBorder, rightBorder));
-                    Canvas.SetTop(newTarget.GameShape, _rngCreator.
-                        Next(topBorder, bottomBorder));
+                    Canvas.SetLeft(newTarget.GameShape, _rngCreator.Next(leftBorder + LEFT_TARGET_INDENT, rightBorder));
+                    Canvas.SetTop(newTarget.GameShape, _rngCreator.Next(topBorder, bottomBorder));
                     newTarget.GameShape.IsVisibleChanged += KillTargetHandler;
                     newTarget.GameShape.Visibility = Visibility.Visible;
                 });
             }
         }
-
         private async void KillTargetHandler(object sender, DependencyPropertyChangedEventArgs isAlive)
         {
             var wasKilled = !(bool)isAlive.NewValue;
 
             if (wasKilled)
             {
-                await RemoveTarget(GWin, sender as Shape);
+                await RemoveTarget(GWin, (Shape)sender);
             }
         }
-
         public async Task RemoveTarget(GameWindow gWin, Shape obj)
         {
             Targets.RemoveAll(x => x.GameShape.GetHashCode() == obj.GetHashCode());

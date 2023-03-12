@@ -19,8 +19,10 @@ namespace pong_inari.engine
             GWin = gWin;
             Ball = ball;
             Collision = new List<DependencyObject>();
-            CurrentGeometry = new Dictionary<string, Geometry>();
-            CurrentGeometry.Add("PlayerBall", ball._ballGeometry);
+            CurrentGeometry = new Dictionary<string, Geometry>
+            {
+                { "PlayerBall", ball._ballGeometry }
+            };
         }
         public void CheckCollisionModels(Geometry obj)
         {
@@ -47,27 +49,27 @@ namespace pong_inari.engine
             if (!Collision.Any()) { return; }
             {
                 string name;
-                foreach (var collision in Collision)
+                foreach (DependencyObject collision in Collision)
                 {
-                    name = collision.GetValue(Rectangle.NameProperty) as string;
+                    name = (string)collision.GetValue(Rectangle.NameProperty);
 
                     if (name == "YellowCat")
                     {
                         collision.SetValue(Rectangle.VisibilityProperty, Visibility.Hidden);
-                        ReflectBall(collision as Rectangle);
+                        ReflectBall((Rectangle)collision);
 
-                        Task.Run(() => GWin.PlaySoundEffect("cathit"));
+                        Task.Run(() => GameWindow.PlaySoundEffect("cathit"));
                     }
                     else if (name.Contains("Line"))
                     {
-                        ReflectBall(collision as Rectangle);
-                        Task.Run(() => GWin.PlaySoundEffect("playerhit"));
+                        ReflectBall((Rectangle)collision);
+                        Task.Run(() => GameWindow.PlaySoundEffect("playerhit"));
                     }
                     else if (name.Contains("Stick"))
                     {
-                        ReflectBall(collision as Rectangle);
+                        ReflectBall((Rectangle)collision);
                         Ball.MoveVector.VelocityY += (GWin.PongGame.Elements.Stick.MoveVector.VelocityY / 5);
-                        Task.Run(() => GWin.PlaySoundEffect("playerhit"));
+                        Task.Run(() => GameWindow.PlaySoundEffect("playerhit"));
                     }
                 }
                 Collision.Clear();

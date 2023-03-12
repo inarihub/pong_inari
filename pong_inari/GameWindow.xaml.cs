@@ -34,7 +34,7 @@ namespace pong_inari
         }
         private void ResetWindow()
         {
-            Hint.Content = string.Empty;
+            Hint.Visibility = Visibility.Hidden;
             ResetPlayer();
             PlayerScore.Content = "000000000000000";
             StartMessage.Visibility = Visibility.Visible;
@@ -46,7 +46,7 @@ namespace pong_inari
             Canvas.SetLeft(PlayerStick, PLAYERSTICK_X_DEFAULT);
             Canvas.SetTop(PlayerStick, PLAYERSTICK_Y_DEFAULT);
         }
-        public async Task PlaySoundEffect(string name)
+        public static async Task PlaySoundEffect(string name)
         {
             await GameAudio.GetAudio(name).PlayAsync();
         }
@@ -66,30 +66,32 @@ namespace pong_inari
         }
         private void EnterAction()
         {
-            if (PongGame is null) { return; }
+            if (PongGame is null) { throw new NullReferenceException(); }
 
-            if (!PongGame.IsInProcess)
+            if (PongGame.CurrentState == GameState.Preparing)
             {
-                PongGame.Start();
-                StartMessage.Visibility = Visibility.Hidden;
+                PongGame.CurrentState = GameState.Started;
+            }
+            else if (PongGame.CurrentState == GameState.Paused)
+            {
+                PongGame.CurrentState = GameState.Unpaused;
             }
         }
         private void EscapeAction()
         {
-            if (PongGame is null) { return; }
+            if (PongGame is null) { throw new NullReferenceException(); }
 
-            if (!PongGame.IsInProcess)
+            if (PongGame.CurrentState == GameState.Started ||
+                PongGame.CurrentState == GameState.Unpaused)
             {
-                PongGame.Stop();
-                ResetWindow();
-                Hide();
-                App.Current.MainWindow.Show();
+                PongGame.CurrentState = GameState.Paused;
             }
             else
             {
-                PongGame.Stop();
-                StartMessage.Content = "PAUSE (Enter - continue, Esc - Main menu)";
-                StartMessage.Visibility = Visibility.Visible;
+                ResetWindow();
+                Hide();
+                PongGame.CurrentState = GameState.Exited;
+                App.Current.MainWindow.Show();
             }
         }
         private void GameScreen_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -97,13 +99,12 @@ namespace pong_inari
             var isVisible = (bool)e.NewValue;
             if (isVisible)
             {
-                if (PongGame is not null) { PongGame.Dispose(); }
                 PongGame = new Game(this);
                 PlayerBall.Fill = new ImageBrush(Cfg.BallSkins[Cfg.CurrentSkin]);
                 PlayerBall.Visibility = Visibility.Visible;
-                StartMessage.Content = "Are you ready? Press \"Enter\" to start!";
+                Hint.Visibility = Visibility.Visible;
                 Focus();
-                PongGame.Initialize();
+                PongGame.CurrentState = GameState.Preparing;
                 Controls.SetInGameControls();
             }
             else

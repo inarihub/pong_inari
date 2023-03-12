@@ -11,7 +11,6 @@ namespace pong_inari.engine
     {
         public double VelocityX { get; set; }
         public double VelocityY { get; set; }
-        private int Angle { get; set; }
         public Acceleration(double velocityX, double velocityY) 
         {
             VelocityX= velocityX;
